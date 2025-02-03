@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>"
+
+	<arg name="model" default="$(find pybullet_ros_server)/urdf/testbot.xacro" />
+      <arg name="rvizconfig" default="$(find pybullet_ros_client)/rviz/testbot.rviz" />
+
+      <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />	
+
+      <node pkg="pybullet_ros_client" type="pybullet_ros_client" name="pybullet_ros_client" output="screen"/>
+      <node pkg="joy" type="joy_node" name="joy_node" output="screen"/>
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="false"/>
+	
+</launch>
