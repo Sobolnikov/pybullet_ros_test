@@ -104,6 +104,7 @@ class PyBulletRosServer:
             names.append(self.joint_names[i])  # Добавляем имя шарнира в список
 
         joint_state.name = names  # Устанавливаем имена шарниров
+        joint_state.header.stamp = rospy.Time.now()
         joint_state.position = positions  # Устанавливаем скорости шарниров
         joint_state.velocity = velocities  # Устанавливаем скорости шарниров
 
