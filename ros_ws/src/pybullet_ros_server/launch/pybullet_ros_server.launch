@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <launch>"
 
+      <param name="use_gui" type="bool" value="true"/>
       <node pkg="pybullet_ros_server" type="pybullet_ros_server_node.py" name="pybullet_ros_server" output="screen"/>
 	
 </launch>

@@ -7,7 +7,6 @@ Panels:
         - /Global Options1
         - /Status1
         - /Grid1
-        - /RobotModel1/Status1
       Splitter Ratio: 0.5
     Tree Height: 461
   - Class: rviz/Selection
@@ -56,18 +55,47 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
-      Enabled: false
+      Enabled: true
       Links:
         All Links Enabled: true
         Expand Joint Details: false
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        l_f_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        l_r_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        r_f_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        r_r_wheel:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        root_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
       Name: RobotModel
       Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
-      Value: false
+      Value: true
       Visual Enabled: true
     - Class: rviz/TF
       Enabled: true
@@ -86,7 +114,15 @@ Visualization Manager:
           Value: true
         base_to_r_r_wheel:
           Value: true
+        l_f_wheel:
+          Value: true
+        l_r_wheel:
+          Value: true
         odom:
+          Value: true
+        r_f_wheel:
+          Value: true
+        r_r_wheel:
           Value: true
         root_link:
           Value: true
@@ -107,6 +143,14 @@ Visualization Manager:
               base_to_r_f_wheel:
                 {}
               base_to_r_r_wheel:
+                {}
+              l_f_wheel:
+                {}
+              l_r_wheel:
+                {}
+              r_f_wheel:
+                {}
+              r_r_wheel:
                 {}
       Update Interval: 0
       Value: true
@@ -175,4 +219,4 @@ Window Geometry:
     collapsed: false
   Width: 1387
   X: 170
-  Y: 195
+  Y: 158

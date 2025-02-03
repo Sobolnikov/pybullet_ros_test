@@ -19,6 +19,12 @@ class PyBulletRosServer:
         self.joint_state_publisher = None  # Публикация состояния шарниров
         self.joint_names = []  # Список имен шарниров робота
 
+        self.use_gui = rospy.get_param('use_gui', True)  # GUI по умолчанию
+    
+    def __del__(self):
+       p.disconnect()
+       rospy.loginfo("Exit PyBullet Simulation")
+
     # Функция для старта симуляции в PyBullet
     def start_simulation(self):
         rospy.loginfo("Starting PyBullet Simulation")
@@ -33,8 +39,16 @@ class PyBulletRosServer:
         urdf = open(urdf_filename, "w")
         subprocess.call(['rosrun', 'xacro', 'xacro', filename], stdout=urdf)
 
-        # Подключаемся к PyBullet с графическим интерфейсом
-        p.connect(p.GUI) #p.DIRECT) 
+        # Подключаемся к PyBullet
+        if self.use_gui:
+            rospy.loginfo("Running PyBullet in GUI mode")
+            p.connect(p.GUI)  # GUI mode 
+            p.setRealTimeSimulation(1)  # Симуляция в real-time
+        else:
+            rospy.loginfo("Running PyBullet in DIRECT mode")
+            p.connect(p.DIRECT)  # DIRECT mode
+            p.setRealTimeSimulation(0)
+
         p.setGravity(0, 0, self.GRAVITY)  # Устанавливаем значение силы тяжести
         # p.setPhysicsEngineParameter(enableConeFriction = 1)  # Включаем конусное трение (по умолчанию)
 
@@ -62,12 +76,13 @@ class PyBulletRosServer:
         # Главный цикл симуляции
         while not rospy.is_shutdown():
             self.publish_joint_velocities()  # Публикуем состояния шарниров
-            p.stepSimulation()  # Шаг симуляции
+            if not self.use_gui:
+                p.stepSimulation()  # Шаг симуляции
             time.sleep(0.01)  # Пауза между шагами симуляции
 
     # Обработчик команды движения робота
     def move_robot(self, msg):
-        rospy.loginfo("Received movement command: linear_x = %f, angular_z = %f", msg.linear.x, msg.angular.z)
+        # rospy.loginfo("Received movement command: linear_x = %f, angular_z = %f", msg.linear.x, msg.angular.z)
         
         # Получаем линейную и угловую скорости
         linear_velocity = msg.linear.x
@@ -110,7 +125,7 @@ class PyBulletRosServer:
 
         # Публикуем сообщение
         self.joint_state_publisher.publish(joint_state)
-        rospy.loginfo("Published joint velocities: %s", velocities)  # Вывод опубликованных данных
+        # rospy.loginfo("Published joint velocities: %s", velocities)  # Вывод опубликованных данных
 
     # Настройка ROS и запуск симуляции
     def setup_ros(self):
