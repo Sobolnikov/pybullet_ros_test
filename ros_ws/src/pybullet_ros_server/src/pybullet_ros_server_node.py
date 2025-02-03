@@ -92,15 +92,19 @@ class PyBulletRosServer:
     def publish_joint_velocities(self):
         joint_state = JointState()  # Создаем сообщение состояния шарниров
         velocities = []  # Список для хранения угловых скоростей шарниров
+        positions = []  # Список для хранения угловых скоростей шарниров
         names = []  # Список для хранения имен шарниров
 
         # Перебираем все шарниры и получаем их скорости
-        for i in range(p.getNumJoints(self.robot_id)):
+        for i in range(1, p.getNumJoints(self.robot_id)):
+            joint_position = p.getJointState(self.robot_id, i)[0]  # Получаем скорость шарнира
             joint_velocity = p.getJointState(self.robot_id, i)[1]  # Получаем скорость шарнира
+            positions.append(joint_position)  # Добавляем скорость в список
             velocities.append(joint_velocity)  # Добавляем скорость в список
             names.append(self.joint_names[i])  # Добавляем имя шарнира в список
 
         joint_state.name = names  # Устанавливаем имена шарниров
+        joint_state.position = positions  # Устанавливаем скорости шарниров
         joint_state.velocity = velocities  # Устанавливаем скорости шарниров
 
         # Публикуем сообщение

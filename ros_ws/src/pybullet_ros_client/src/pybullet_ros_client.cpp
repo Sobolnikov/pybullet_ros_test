@@ -51,12 +51,18 @@ public:
     void jointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
     {
         // Вычисление скорости колес на основе полученных данных
-        double left_wheel_vel = (msg->velocity[1]) / 13.325;
-        double right_wheel_vel = (msg->velocity[3]) / 13.325;
+        double left_wheel_vel = (msg->velocity[0]) / 13.325;
+        double right_wheel_vel = (msg->velocity[2]) / 13.325;
 
         // Расчет линейной и угловой скорости
         linear_velocity = (left_wheel_vel + right_wheel_vel) / 2.0;
         angular_velocity = (right_wheel_vel - left_wheel_vel) / wheel_distance;
+
+        // Получение углов поворота колес из joint_states
+        double l_f_wheel_angle = msg->position[0];  // Угол левого колеса
+        double l_r_wheel_angle = msg->position[1];  // Угол левого колеса
+        double r_f_wheel_angle = msg->position[2]; // Угол правого колеса
+        double r_r_wheel_angle = msg->position[3]; // Угол правого колеса
 
         // Вычисление времени между обновлениями
         ros::Time current_time = ros::Time::now();
@@ -66,6 +72,8 @@ public:
         updateOdometry(dt);  // Обновление данных о положении робота
         publishOdometry(current_time);  // Публикация одометрии
         broadcastTF(current_time);  // Публикация TF
+        broadcastWheelTransforms(current_time, l_f_wheel_angle, l_r_wheel_angle, r_f_wheel_angle, r_r_wheel_angle);  // Публикация TF для колес с углом
+
     }
 
     // Обновление данных о положении робота
@@ -113,6 +121,46 @@ public:
 
         // Отправка TF
         br.sendTransform(tf::StampedTransform(transform, current_time, "odom", "root_link"));
+    }
+
+    // Публикация TF для колес
+    void broadcastWheelTransforms(ros::Time current_time, double l_f_wheel_angle, double l_r_wheel_angle, double r_f_wheel_angle, double r_r_wheel_angle)
+    {
+        static tf::TransformBroadcaster br;
+        tf::Transform transform;
+
+        // Преобразования для левого и правого колес относительно base_link
+        tf::Quaternion wheel_quat_l_f;
+        tf::Quaternion wheel_quat_l_r;
+        tf::Quaternion wheel_quat_r_f;
+        tf::Quaternion wheel_quat_r_r;
+
+        // Преобразуем углы колес в кватернионы
+        wheel_quat_l_f.setRPY(0, l_f_wheel_angle, 0);  // Угол поворота левого колеса
+        wheel_quat_l_r.setRPY(0, l_r_wheel_angle, 0);  // Угол поворота левого колеса
+        wheel_quat_r_f.setRPY(0, r_f_wheel_angle, 0); // Угол поворота правого колеса
+        wheel_quat_r_r.setRPY(0, r_f_wheel_angle, 0); // Угол поворота правого колеса
+
+        tf::Vector3 wheel_offset_l_f(wheel_distance / 2, wheel_distance / 2, -0.08);  // Сдвиг для левого колеса
+        tf::Vector3 wheel_offset_l_r(-wheel_distance / 2, wheel_distance / 2, -0.08);  // Сдвиг для левого колеса
+        tf::Vector3 wheel_offset_r_f(wheel_distance / 2, -wheel_distance / 2, -0.08);  // Сдвиг для правого колеса
+        tf::Vector3 wheel_offset_r_r(-wheel_distance / 2, -wheel_distance / 2, -0.08);  // Сдвиг для правого колеса
+
+        transform.setOrigin(wheel_offset_l_f);
+        transform.setRotation(wheel_quat_l_f);
+        br.sendTransform(tf::StampedTransform(transform, current_time, "base_link", "base_to_l_f_wheel"));
+
+        transform.setOrigin(wheel_offset_l_r);
+        transform.setRotation(wheel_quat_l_r);
+        br.sendTransform(tf::StampedTransform(transform, current_time, "base_link", "base_to_l_r_wheel"));
+
+        transform.setOrigin(wheel_offset_r_f);
+        transform.setRotation(wheel_quat_r_f);
+        br.sendTransform(tf::StampedTransform(transform, current_time, "base_link", "base_to_r_f_wheel"));
+
+        transform.setOrigin(wheel_offset_r_r);
+        transform.setRotation(wheel_quat_r_r);
+        br.sendTransform(tf::StampedTransform(transform, current_time, "base_link", "base_to_r_r_wheel"));
     }
 
 private:

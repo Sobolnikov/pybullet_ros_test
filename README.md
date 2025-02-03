@@ -34,30 +34,7 @@
 - **ROS** (Noetic)
 - **Python3**
 - **PyBullet**
-<!-- 
-### Установка
-1. Создайте рабочее пространство ROS:
-  
-```bash
-mkdir -p ~/pybullet_ws/src
-cd ~/pybullet_ws/src
-catkin_init_workspace
-```
 
-2. Склонируйте репозиторий проекта:
-
-```bash
-Copy
-git clone <ваш-репозиторий>
-```
-3. Соберите проект:
-
-```bash
-Copy
-cd ~/pybullet_ws
-catkin_make
-source devel/setup.bash
-``` -->
 ### Запуск
 1. Запустите симуляцию PyBullet:
 

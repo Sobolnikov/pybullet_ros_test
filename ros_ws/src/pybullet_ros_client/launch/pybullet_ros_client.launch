@@ -6,6 +6,9 @@
 
       <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />	
 
+      <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+      <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+
       <node pkg="pybullet_ros_client" type="pybullet_ros_client" name="pybullet_ros_client" output="screen"/>
       <node pkg="joy" type="joy_node" name="joy_node" output="screen"/>
       <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="false"/>
